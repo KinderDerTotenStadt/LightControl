@@ -30,6 +30,7 @@ const optionDefinitions = [
 
 let options = commandLineArgs(optionDefinitions);
 let dmx: DMXSender = options.sender;
+// let dmx = ArtNET.newSender({ ip: "192.168.178.47", net: 0, subnet: 0, universe: 0 });
 dmx.reset();
 
 // mh1   | mh2     | laser   | par1     | par2   
@@ -60,6 +61,9 @@ mh2.setTilt(0);
 // });
 // console.log(controler);
 
+let mh1Pos = [0, 0];
+let mh2Pos = [0, 0];
+
 let leftInterval: null | NodeJS.Timeout = null;
 let leftPosition: { x: number, y: number } = { x: 0, y: 0 };
 Steamdeck.on("leftStickMove", (position: { x: number, y: number }) => {
@@ -69,7 +73,12 @@ Steamdeck.on("leftStickMove", (position: { x: number, y: number }) => {
     leftInterval = null;
   } else if (leftInterval == null) {
     leftInterval = setInterval(() => {
-      console.log("left", leftPosition);
+      // console.log("left", leftPosition);
+      mh1Pos[0] = Math.max(0, Math.min(540, mh1Pos[0] + leftPosition.x / 32));
+      mh1Pos[1] = Math.max(0, Math.min(280, mh1Pos[1] + leftPosition.y / 32));
+      // console.log("mh1Pos", mh1Pos);
+      mh1.setPan(mh1Pos[0]);
+      mh1.setTilt(mh1Pos[1]);
     }, 100);
   }
   leftPosition = position;
@@ -84,7 +93,12 @@ Steamdeck.on("rightStickMove", (position: { x: number, y: number }) => {
     rightInterval = null;
   } else if (rightInterval == null) {
     rightInterval = setInterval(() => {
-      console.log("right", rightPosition);
+      // console.log("right", rightPosition);
+      mh2Pos[0] = Math.max(0, Math.min(540, mh2Pos[0] + rightPosition.x / 32));
+      mh2Pos[1] = Math.max(0, Math.min(280, mh2Pos[1] + rightPosition.y / 32));
+      // console.log("mh2Pos", mh2Pos);
+      mh2.setPan(mh2Pos[0]);
+      mh2.setTilt(mh2Pos[1]);
     }, 100);
   }
   rightPosition = position;
