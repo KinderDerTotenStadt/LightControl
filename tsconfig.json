@@ -1,0 +1,31 @@
+{
+  "ts-node": {
+    "files": true
+  },
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2020",
+    "outDir": "dist",
+    "strict": true,
+    "noImplicitAny": true,
+    "baseUrl": "src",
+    "paths": {
+      "@error/*": [
+        "./Errors/*"
+      ],
+      "@device/*": [
+        "./Devices/*"
+      ],
+      "@device": [
+        "./Devices/index.ts"
+      ]
+    },
+    "typeRoots": [
+      "./node_modules/@types",
+      "src/types"
+    ]
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

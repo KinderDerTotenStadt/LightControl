@@ -1,12 +1,47 @@
 {
-  "name": "LightControl",
+  "name": "light-control",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "An DMX ArtNET Application for KinderDerTotenStadt",
+  "main": "dist/index.js",
+  "bin": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "set NODE_ENV=development && ts-node -r tsconfig-paths/register src/index.ts",
+    "build": "pnpm compile && pkg . -o bin/index",
+    "compile": "tsc && tsc-alias",
+    "dev": "set NODE_ENV=development && ts-node-dev -r tsconfig-paths/register src/index.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "keywords": [
+    "DMX",
+    "ArtNET",
+    "KinderDerTotenStadt"
+  ],
+  "author": "Mr.Zero889",
+  "license": "MIT",
+  "dependencies": {
+    "@types/ffi-napi": "^4.0.7",
+    "@types/through2": "^2.0.38",
+    "dmxnet": "git+https://git@github.com/margau/dmxnet.git",
+    "ffi-napi": "^4.0.3",
+    "fili": "^2.0.3",
+    "mic6": "^2.1.2",
+    "sliding-window-max": "^1.1.0",
+    "speaker": "^0.5.4",
+    "through2": "^4.0.2",
+    "tsconfig-paths": "^4.2.0",
+    "webview-nodejs": "^0.1.5"
+  },
+  "pkg": {
+    "targets": [
+      "node18-win-x64",
+      "node18-linux-x64"
+    ],
+    "outputPath": "bin"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "speaker@0.5.4": "patches/speaker@0.5.4.patch",
+      "mic6@2.1.2": "patches/mic6@2.1.2.patch"
+    }
+  }
 }

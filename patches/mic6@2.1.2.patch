@@ -1,0 +1,13 @@
+diff --git a/lib/mic.js b/lib/mic.js
+index a1bb887dd92aa0e12cb032de0ca773a8b30862e5..41f6cddcf530fcc2406337127e3fd1ed113d766f 100644
+--- a/lib/mic.js
++++ b/lib/mic.js
+@@ -58,7 +58,7 @@ var mic = function mic(options) {
+                                     '-t', fileType, 
+                                     '--endian', endian,
+                                    '-'],
+-                                    audioProcessOptions)
++                                    { ...audioProcessOptions, env: { AUDIODEV: options.device ?? 'default' } })
+             }
+             else if(isMac){
+               audioProcess = spawn('rec', 

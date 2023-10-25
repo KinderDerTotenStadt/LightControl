@@ -1,0 +1,12 @@
+diff --git a/index.d.ts b/index.d.ts
+index 0f99ecad599aae53ee52de6a4565ea81609e6cb1..d3f043581e896bc24dd40400195a33bf4f93ffc9 100644
+--- a/index.d.ts
++++ b/index.d.ts
+@@ -2,6 +2,7 @@ import { Writable, WritableOptions } from 'stream';
+ 
+ declare namespace Speaker {
+     interface Options extends WritableOptions {
++        readonly device?: string;
+         readonly channels?: number;
+         readonly bitDepth?: number;
+         readonly sampleRate?: number;
