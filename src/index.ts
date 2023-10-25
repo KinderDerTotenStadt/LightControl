@@ -8,6 +8,8 @@ import * as Speaker from 'speaker';
 import EL230RGBMK2 from '@device/Laserworld/EL230RGBMK2';
 import Spot60Prism from '@device/Light4Me/Movinghead/Spot60Prism';
 import * as commandLineArgs from 'command-line-args';
+// const XboxController = require('xbox-controller');
+import Steamdeck from 'steamdeck';
 
 process.title = "@kinder-der-toten-stadt/light-control@1.0.0";
 
@@ -51,3 +53,39 @@ mh1.setPan(0);
 mh1.setTilt(0);
 mh2.setPan(0);
 mh2.setTilt(0);
+
+// let controler = new XboxController();
+// controler.on('right:move', function (position: any) {
+//   console.log('left:move', position);
+// });
+// console.log(controler);
+
+let leftInterval: null | NodeJS.Timeout = null;
+let leftPosition: { x: number, y: number } = { x: 0, y: 0 };
+Steamdeck.on("leftStickMove", (position: { x: number, y: number }) => {
+  if (position.x == 0 && position.y == 0) {
+    if (leftInterval != null)
+      clearInterval(leftInterval);
+    leftInterval = null;
+  } else if (leftInterval == null) {
+    leftInterval = setInterval(() => {
+      console.log("left", leftPosition);
+    }, 100);
+  }
+  leftPosition = position;
+})
+
+let rightInterval: null | NodeJS.Timeout = null;
+let rightPosition: { x: number, y: number } = { x: 0, y: 0 };
+Steamdeck.on("rightStickMove", (position: { x: number, y: number }) => {
+  if (position.x == 0 && position.y == 0) {
+    if (rightInterval != null)
+      clearInterval(rightInterval);
+    rightInterval = null;
+  } else if (rightInterval == null) {
+    rightInterval = setInterval(() => {
+      console.log("right", rightPosition);
+    }, 100);
+  }
+  rightPosition = position;
+})
