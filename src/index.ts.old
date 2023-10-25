@@ -6,47 +6,77 @@ import BeatDetector from 'BeatDetector';
 import Gain from 'Gain';
 import * as Speaker from 'speaker';
 import EL230RGBMK2 from '@device/Laserworld/EL230RGBMK2';
+import Spot60Prism from '@device/Light4Me/Movinghead/Spot60Prism';
 
 process.title = "dmx-art-net@1.0.0";
 
 let dmx = ArtNET.newSender({ ip: "192.168.178.47", net: 0, subnet: 0, universe: 0 });
 
 dmx.reset();
+// mh1   | mh2     | laser   | par1     | par2   
+// 1 - 9 | 10 - 18 | 19 - 27 | 28 - 35  | 36 - 44
 
-let device1 = new LedFloodPanel150RGB8Channel(dmx, 0);
-let device2 = new LedFloodPanel150RGB8Channel(dmx, 8);
-let device3 = new EL230RGBMK2(dmx, 16);
+let mh1 = new Spot60Prism(dmx, 0);
+let mh2 = new Spot60Prism(dmx, 9);
+let laser = new EL230RGBMK2(dmx, 18);
+let par1 = new LedFloodPanel150RGB8Channel(dmx, 27);
+let par2 = new LedFloodPanel150RGB8Channel(dmx, 35);
 
-device1.setDimmer(255);
-device2.setDimmer(255);
+mh1.setStrobe(8);
+mh1.setDimmer(255);
+mh2.setStrobe(8);
+mh2.setDimmer(255);
 
-// device1.setStrobe(255);
-// device2.setStrobe(255);
+laser.setOn(true);
+laser.setDynamic(false);
+laser.setPettern(0);
+laser.setX(255);
+laser.setY(0);
+laser.setScanSpeed(0);
+laser.setPetternSpeed(0);
+laser.setZoom(0);
+laser.setColor(0);
+laser.setColorSegment(0);
 
-device3.setOn(false);
-device3.setDynamic(false);
-device3.setPettern(0);
-device3.setX(255);
-device3.setY(0);
-device3.setScanSpeed(0);
-device3.setPetternSpeed(0);
-device3.setZoom(0);
-device3.setColor(5);
-device3.setColorSegment(0);
+par1.setDimmer(255);
+par2.setDimmer(255);
 
 let degres = 0;
+let mhcolor = 0;
+let lasercolor = 0;
+let mhx = 0;
+let mhy = 0;
+let mhi = true;
+let mhay = true;
+let mhax = false;
 
 setInterval(() => {
   degres++;
   degres = degres % 360;
-  device1.setColor(...hsl2rgb(degres, 1, 0.5));
-  device2.setColor(...hsl2rgb(degres + 180, 1, 0.5));
+  par1.setColor(...hsl2rgb(degres, 1, 0.5));
+  par2.setColor(...hsl2rgb(degres + 180, 1, 0.5));
 }, 10);
 
-
 const beat = (distance: number) => {
-  console.log(distance);
   degres += 180;
+  mhcolor = (mhcolor + 1) % 8;
+  mh1.setColor(mhcolor);
+  mh2.setColor(mhcolor);
+  lasercolor = (lasercolor + 1) % 7;
+  laser.setColor(lasercolor);
+
+  if (mhax) {
+    mhx = (mhx == 0 ? 100 : 0);
+    mh1.setPan(360 - 90 + ((mhx) / 100 * 180));
+    mh2.setPan(360 - 90 + ((mhi ? 100 - mhx : mhx) / 100 * 180));
+  }
+  if (mhay) {
+    mhy = (mhy == 0 ? 100 : 0);
+    mh1.setTilt(mhy);
+    mh2.setTilt(mhi ? 100 - mhy : mhy);
+  }
+
+  console.log(distance);
 };
 
 const soundOptions = {
