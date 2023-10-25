@@ -19,9 +19,9 @@
   "author": "Mr.Zero889",
   "license": "MIT",
   "dependencies": {
-    "@types/ffi-napi": "^4.0.7",
-    "@types/through2": "^2.0.38",
-    "dmxnet": "git+https://git@github.com/margau/dmxnet.git",
+    "@types/ffi-napi": "^4.0.9",
+    "@types/through2": "^2.0.40",
+    "dmxnet": "github:margau/dmxnet",
     "ffi-napi": "^4.0.3",
     "fili": "^2.0.3",
     "mic6": "^2.1.2",
@@ -29,7 +29,7 @@
     "speaker": "^0.5.4",
     "through2": "^4.0.2",
     "tsconfig-paths": "^4.2.0",
-    "webview-nodejs": "^0.1.5"
+    "webview-nodejs": "^0.2.4"
   },
   "pkg": {
     "targets": [
