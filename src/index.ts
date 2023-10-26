@@ -36,23 +36,24 @@ dmx.reset();
 // mh1   | mh2     | laser   | par1     | par2   
 // 1 - 9 | 10 - 18 | 19 - 27 | 28 - 35  | 36 - 44
 
-let mh1 = new Spot60Prism(dmx, 0);
-let mh2 = new Spot60Prism(dmx, 9);
+let mh1 = new Spot60Prism(dmx, 9);
+let mh2 = new Spot60Prism(dmx, 0);
 // let laser = new EL230RGBMK2(dmx, 18);
 let par1 = new LedFloodPanel150RGB8Channel(dmx, 27);
 let par2 = new LedFloodPanel150RGB8Channel(dmx, 35);
 
-mh1.setStrobe(8);
-mh1.setDimmer(255);
-mh2.setStrobe(8);
-mh2.setDimmer(255);
+mh1.setStrobe(0);
+mh1.setDimmer(64);
+//mh1.setColor(4);
+mh2.setStrobe(0);
+mh2.setDimmer(64);
 
 par1.setDimmer(255);
 par2.setDimmer(255);
 
-mh1.setPan(0);
+mh1.setPan(360);
 mh1.setTilt(0);
-mh2.setPan(0);
+mh2.setPan(360);
 mh2.setTilt(0);
 
 // let controler = new XboxController();
@@ -61,8 +62,8 @@ mh2.setTilt(0);
 // });
 // console.log(controler);
 
-let mh1Pos = [0, 0];
-let mh2Pos = [0, 0];
+let mh1Pos = [360, 0];
+let mh2Pos = [360, 0];
 
 let leftInterval: null | NodeJS.Timeout = null;
 let leftPosition: { x: number, y: number } = { x: 0, y: 0 };
@@ -75,11 +76,11 @@ Steamdeck.on("leftStickMove", (position: { x: number, y: number }) => {
     leftInterval = setInterval(() => {
       // console.log("left", leftPosition);
       mh1Pos[0] = Math.max(0, Math.min(540, mh1Pos[0] + leftPosition.x / 32));
-      mh1Pos[1] = Math.max(0, Math.min(280, mh1Pos[1] + leftPosition.y / 32));
+      mh1Pos[1] = Math.max(0, Math.min(280, mh1Pos[1] - leftPosition.y / 32));
       // console.log("mh1Pos", mh1Pos);
       mh1.setPan(mh1Pos[0]);
       mh1.setTilt(mh1Pos[1]);
-    }, 100);
+    }, 250);
   }
   leftPosition = position;
 })
@@ -94,8 +95,8 @@ Steamdeck.on("rightStickMove", (position: { x: number, y: number }) => {
   } else if (rightInterval == null) {
     rightInterval = setInterval(() => {
       // console.log("right", rightPosition);
-      mh2Pos[0] = Math.max(0, Math.min(540, mh2Pos[0] + rightPosition.x / 32));
-      mh2Pos[1] = Math.max(0, Math.min(280, mh2Pos[1] + rightPosition.y / 32));
+      mh2Pos[0] = Math.max(0, Math.min(540, mh2Pos[0] + rightPosition.x / 64));
+      mh2Pos[1] = Math.max(0, Math.min(280, mh2Pos[1] - rightPosition.y / 64));
       // console.log("mh2Pos", mh2Pos);
       mh2.setPan(mh2Pos[0]);
       mh2.setTilt(mh2Pos[1]);
@@ -103,3 +104,15 @@ Steamdeck.on("rightStickMove", (position: { x: number, y: number }) => {
   }
   rightPosition = position;
 })
+
+let leftOn = false;
+Steamdeck.on("button3:pressed", () => {
+  leftOn = !leftOn;
+  mh1.setStrobe(leftOn ? 8 : 0);
+});
+
+let rightOn = false;
+Steamdeck.on("button2:pressed", () => {
+  rightOn = !rightOn;
+  mh2.setStrobe(rightOn ? 8 : 0);
+});
