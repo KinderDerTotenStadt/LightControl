@@ -117,3 +117,34 @@ Steamdeck.on("button2:pressed", () => {
   rightOn = !rightOn;
   mh2.setStrobe(rightOn ? 8 : 0);
 });
+
+
+
+Steamdeck.on("button4:pressed", () => {
+  mh1.setColor(6);
+  mh2.setColor(6);
+  par1.setColor(0, 0, 255);
+  par2.setColor(0, 0, 255);
+});
+
+
+Steamdeck.on("button5:pressed", () => {
+  mh1.setColor(2);
+  mh2.setColor(2);
+  par1.setColor(0, 255, 0);
+  par2.setColor(0, 255, 0);
+});
+
+Steamdeck.on("button6:pressed", () => {
+  mh1.setColor(0);
+  mh2.setColor(0);
+  par1.setColor(0, 0, 0);
+  par2.setColor(0, 0, 0);
+});
+
+Steamdeck.on("button7:pressed", () => {
+  mh1.setColor(4);
+  mh2.setColor(4);
+  par1.setColor(255, 255, 0);
+  par2.setColor(255, 255, 0);
+});
