@@ -10,6 +10,7 @@ import Spot60Prism from '@device/Light4Me/Movinghead/Spot60Prism';
 import * as commandLineArgs from 'command-line-args';
 // const XboxController = require('xbox-controller');
 import Steamdeck from 'steamdeck';
+import GenericDevice from '@device/GenericDevice';
 
 process.title = "@kinder-der-toten-stadt/light-control@1.0.0";
 
@@ -22,8 +23,10 @@ function parseSender(sender: string) {
     [ip, port] = sender.split(':');
   else
     ip = ipAndPort;
-  return ArtNET.newSender({ ip, net: Number(net), port: Number(port), subnet: Number(subnet), universe: Number(universe) });
+  return ArtNET.newSender({ net: Number(net), port: Number(port), subnet: Number(subnet), universe: Number(universe) });
 }
+
+
 
 const optionDefinitions = [
   { name: 'sender', alias: 's', type: (sender: string) => parseSender(sender), multiple: false, defaultOption: true },
@@ -37,11 +40,27 @@ dmx.reset();
 // mh1   | mh2     | laser   | par1     | par2   
 // 1 - 9 | 10 - 18 | 19 - 27 | 28 - 35  | 36 - 44
 
-let mh1 = new Spot60Prism(dmx, 0);
-let mh2 = new Spot60Prism(dmx, 9);
+let mh1 = new Spot60Prism(dmx, 100);
+let mh2 = new Spot60Prism(dmx, 108);
 // let laser = new EL230RGBMK2(dmx, 18);
-let par1 = new LedFloodPanel150RGB8Channel(dmx, 27);
-let par2 = new LedFloodPanel150RGB8Channel(dmx, 35);
+let par1 = new LedFloodPanel150RGB8Channel(dmx, 0);
+let par2 = new LedFloodPanel150RGB8Channel(dmx, 8);
+
+let lights = new GenericDevice(dmx, 19, 8);
+
+let rec = ArtNET.newReceiver({net: 0, subnet: 0, universe: 0});
+rec.on('data', (data: Array<number>) => {
+  let lightData = data.slice(19, 19 + 8);
+  console.log(lightData);
+  lights.setChannel(0, data[19 + 0]);
+  lights.setChannel(0, data[19 + 1]);
+  lights.setChannel(0, data[19 + 2]);
+  lights.setChannel(0, data[19 + 3]);
+  lights.setChannel(0, data[19 + 4]);
+  lights.setChannel(0, data[19 + 5]);
+  lights.setChannel(0, data[19 + 6]);
+  lights.setChannel(0, data[19 + 7]);
+});
 
 mh1.setStrobe(0);
 mh1.setDimmer(128);
@@ -76,12 +95,12 @@ Steamdeck.on("leftStickMove", (position: { x: number, y: number }) => {
   } else if (leftInterval == null) {
     leftInterval = setInterval(() => {
       // console.log("left", leftPosition);
-      mh1Pos[0] = Math.max(0, Math.min(540, mh1Pos[0] + leftPosition.x / 32));
-      mh1Pos[1] = Math.max(0, Math.min(280, mh1Pos[1] - leftPosition.y / 32));
+      mh1Pos[0] = Math.max(0, Math.min(540, mh1Pos[0] + leftPosition.x / 64));
+      mh1Pos[1] = Math.max(0, Math.min(280, mh1Pos[1] - leftPosition.y / 64));
       console.log("mh1Pos", mh1Pos);
       mh1.setPan(mh1Pos[0]);
       mh1.setTilt(mh1Pos[1]);
-    }, 250);
+    }, 100);
   }
   leftPosition = position;
 })
