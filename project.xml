@@ -1,0 +1,12 @@
+<project>
+    <folder name="Movinghead">
+        <device name="Left" type="Light4Me/Movinghead/Spot60Prism" />
+        <device name="Right" type="Light4Me/Movinghead/Spot60Prism" />
+    </folder>
+    <folder name="Par">
+        <folder name="Zug">
+            <device name="Left" type="Stairville/LedFloodPanel150RGB8Channel" />
+            <device name="Right" type="Stairville/LedFloodPanel150RGB8Channel" />
+        </folder>
+    </folder>
+</project>

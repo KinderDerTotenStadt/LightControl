@@ -24,17 +24,17 @@
     "@types/ffi-napi": "^4.0.9",
     "@types/node-hid": "^1.3.3",
     "@types/through2": "^2.0.40",
-    "@types/ws": "^8.5.10",
-    "@types/xml2js": "^0.4.14",
     "command-line-args": "^5.2.1",
     "dmxnet": "github:margau/dmxnet",
+    "ffi-napi": "^4.0.3",
+    "fili": "^2.0.3",
+    "mic6": "^2.1.2",
     "node-hid": "^2.1.2",
     "sliding-window-max": "^1.1.0",
+    "speaker": "^0.5.4",
     "through2": "^4.0.2",
     "tsconfig-paths": "^4.2.0",
-    "webview-nodejs": "^0.2.4",
-    "ws": "^8.16.0",
-    "xml2js": "^0.6.2"
+    "webview-nodejs": "^0.2.4"
   },
   "pkg": {
     "targets": [
@@ -42,5 +42,11 @@
       "node18-linux-x64"
     ],
     "outputPath": "bin"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "speaker@0.5.4": "patches/speaker@0.5.4.patch",
+      "mic6@2.1.2": "patches/mic6@2.1.2.patch"
+    }
   }
 }
