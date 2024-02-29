@@ -2,7 +2,6 @@ import * as fs from "fs";
 import ProjectConfig, { currentProject, setCurrentProject } from "./ProjectConfig";
 import Device from "./Device";
 import DeviceElement from "./DeviceElement";
-import Element from "./Element";
 import NamedElement from "./NamedElement";
 import ModuleElement from "./ModuleElement";
 import Module from "./Module";
