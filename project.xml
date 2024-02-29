@@ -9,6 +9,22 @@
             <device name="Right" type="Stairville/LedFloodPanel150RGB8Channel" address="0.8"/>
         </folder>
     </folder>
+    <folder name="Switches">
+        <folder name="Stage">
+            <folder name="Left">
+                <device name="1" type="Generic/Switch" address="0.24" />
+                <device name="2" type="Generic/Switch" address="0.25" />
+                <device name="3" type="Generic/Switch" address="0.26" />
+                <device name="4" type="Generic/Switch" address="0.27" />
+            </folder>
+            <folder name="Right">
+                <device name="1" type="Generic/Switch" address="0.20" />
+                <device name="2" type="Generic/Switch" address="0.21" />
+                <device name="3" type="Generic/Switch" address="0.22" />
+                <device name="4" type="Generic/Switch" address="0.23" />
+            </folder>
+        </folder>
+    </folder>
     <folder name="modules">
         <module name="Steamdeck" type="Steamdeck" />
         <module name="3D-Preview" type="3DPreview" />

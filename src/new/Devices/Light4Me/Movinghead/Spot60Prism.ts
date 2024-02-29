@@ -1,6 +1,3 @@
-import GenericDevice from "@device/GenericDevice";
-import { DMXSender } from "ArtNET";
-import Color from "Objects/Color";
 import Device from "new/Device";
 import Project from "new/Project";
 
