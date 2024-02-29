@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "set NODE_ENV=development && ts-node -r tsconfig-paths/register src/index.ts",
-    "websocket": "set NODE_ENV=development && ts-node -r tsconfig-paths/register src/test.ts",
+    "start-kernel": "set NODE_ENV=development && ts-node -r tsconfig-paths/register src/new/index.ts",
     "build": "pnpm compile && pkg . -o bin/index",
     "compile": "tsc && tsc-alias",
     "dev": "set NODE_ENV=development && ts-node-dev -r tsconfig-paths/register src/index.ts"

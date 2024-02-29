@@ -1,22 +1,24 @@
 import DeviceElement from "./DeviceElement";
 
-let newCreateProps: {type: string, parent: Element | null, children: Array<Element>, attributes: {[attribute: string]: string | boolean | number}} = {type: "", parent: null, children: [], attributes: {}};
-export function  setNewCreateProps(type: string, parent: Element | null, children: Array<Element>, attributes: {[attribute: string]: string | boolean | number}) {
-    newCreateProps = {type, parent, children, attributes};
+let newCreateProps: {type: string, parent: Element | null, root: Element | null, attributes: {[attribute: string]: string | boolean | number}} = {type: "", parent: null, root: null, attributes: {}};
+export function  setNewCreateProps(type: string, parent: Element | null, root: Element | null, attributes: {[attribute: string]: string | boolean | number}) {
+    newCreateProps = {type, parent, root, attributes};
 }
 
 class Element {
-    public children: Array<Element>;
-    public attributes: {[attribute: string]: string | boolean | number};
     public type: string;
-    public parent: Element | null;
+    public parent: Element;
+    public root: Element;
+    public attributes: {[attribute: string]: string | boolean | number};
+    public children: Array<Element>;
 
     public constructor() {
         this.type = newCreateProps.type;
-        this.parent = newCreateProps.parent;
-        this.children = newCreateProps.children;
+        this.root = newCreateProps.root ?? this;
+        this.parent = newCreateProps.parent ?? this.root;
         this.attributes = newCreateProps.attributes;
-        newCreateProps = {type: "", parent: null, children: [], attributes: {}};
+        this.children = [];
+        newCreateProps = {type: "", parent: null, root: null, attributes: {}};
     }
 
     public find<T extends Element>(query: string): T {

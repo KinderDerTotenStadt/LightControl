@@ -1,4 +1,3 @@
-import Device from "./Device";
 import NamedElement from "./NamedElement";
 
 class FolderElement extends NamedElement {

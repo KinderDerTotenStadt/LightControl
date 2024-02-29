@@ -17,13 +17,13 @@ class XMLParser {
             if(error) reject(error);
             resolve(result);
         }));
-        this.root = this.parseElement(data[Object.keys(data)[0]]);
+        this.root = this.parseElement(data[Object.keys(data)[0]], null, null);
     }
 
-    private parseElement(data: any): Element {
-        setNewCreateProps(data['#name'], null, data["$$"]?.map((_: any) => this.parseElement(_)) ?? [], data['$'] ?? {});
+    private parseElement(data: any, parent: Element | null, root: Element | null): Element {
+        setNewCreateProps(data['#name'], parent, root, data['$'] ?? {});
         let element = new (this.registertElements[data['#name']] ?? Element);
-        element.children.forEach(child => child.parent = element);
+        element.children = data["$$"]?.map((_: any) => this.parseElement(_, element, root ?? element)) ?? [];
         return element;
     }
 
