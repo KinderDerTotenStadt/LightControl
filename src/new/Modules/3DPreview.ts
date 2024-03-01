@@ -1,15 +1,15 @@
 import Module from "new/Module";
-import Project from "new/Project";
+import ModuleElement from "new/ModuleElement";
 import * as WebSocket from 'ws';
 
 class Module3DPreview extends Module {
     public wsServer: WebSocket.Server;
 
-    constructor(project: Project) {
-        super(project);
+    constructor(config: ModuleElement) {
+        super(config);
         this.wsServer = new WebSocket.Server({ port: 3000 });
         this.wsServer.on('connection', (socket) => {    
-            setInterval(() => socket.send(JSON.stringify(project.devices)), 250)
+            setInterval(() => socket.send(JSON.stringify(this.project.devices)), 250)
         });
     }
 }

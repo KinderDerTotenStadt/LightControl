@@ -2,10 +2,11 @@ import Device from "new/Device";
 import Project from "new/Project";
 
 export default class Dimmer extends Device {
-  dimmer: number;
+  public dimmer!: number;
 
-  public constructor(project: Project, address: string) {
-    super(project, address);
-    this.dimmer = 0;
+  public constructor(project: Project) {
+    super(project, [
+      {name: "dimmer", default: 0}
+    ]);
   }
 }

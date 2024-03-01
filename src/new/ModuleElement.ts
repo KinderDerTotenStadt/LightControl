@@ -10,7 +10,7 @@ class ModuleElement extends NamedElement {
         super();
         this.ready = new Promise(async (resolve) => {
             let moduleType = await this.loadType(this.attributes['type'].toString());
-            this.module = new moduleType((this.root as ProjectElement).project);
+            this.module = new moduleType(this);
             resolve(this);
         });
     }

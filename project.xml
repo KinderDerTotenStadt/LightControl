@@ -5,8 +5,8 @@
     </folder>
     <folder name="Par">
         <folder name="Zug">
-            <device name="Left" type="Stairville/LedFloodPanel150RGB8Channel" address="0.0"/>
-            <device name="Right" type="Stairville/LedFloodPanel150RGB8Channel" address="0.8"/>
+            <device name="Left" type="Stairville/LedFloodPanel150RGB/8Channel" address="0.0"/>
+            <device name="Right" type="Stairville/LedFloodPanel150RGB/8Channel" address="0.8"/>
         </folder>
     </folder>
     <folder name="Switches">
@@ -27,6 +27,7 @@
     </folder>
     <folder name="modules">
         <module name="Steamdeck" type="Steamdeck" />
+        <module name="ArtNET" type="ArtNET" />
         <module name="3D-Preview" type="3DPreview" />
     </folder>
 </project>

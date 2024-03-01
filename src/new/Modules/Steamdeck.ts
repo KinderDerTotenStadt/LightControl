@@ -1,9 +1,9 @@
 import Module from "new/Module";
-import Project from "new/Project";
+import ModuleElement from "new/ModuleElement";
 
 class ModuleSteamdeck extends Module {
-    constructor(project: Project) {
-        super(project);
+    constructor(config: ModuleElement) {
+        super(config);
     }
 }
 
