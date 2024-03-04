@@ -9,6 +9,7 @@ let controler = new HID.HID(device.path ?? "");
 let lastValue = [0, 0, 0, 0];
 let lastButtons = [false, false, false, false, false, false, false, false];
 controler.on('data', (data: Buffer) => {
+  console.log("stsa")
   let leftX = data.readInt8(49);
   let leftY = data.readInt8(51);
   let rightX = data.readInt8(53);

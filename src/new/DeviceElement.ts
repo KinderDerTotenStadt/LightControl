@@ -12,12 +12,12 @@ class DeviceElement extends NamedElement {
         super();
         this.ready = new Promise(async (resolve) => {
             let deviceType = await this.loadType(this.attributes['type'].toString());
-            this.device = new deviceType((this.root as ProjectElement).project);
+            this.device = new deviceType(this);
             resolve(this);
         });
     }
 
-    private async loadType(type: string): Promise<new (project: Project) => Device> {
+    private async loadType(type: string): Promise<new (config: DeviceElement) => Device> {
         return (await import('./Devices/' + type)).default;
     }
 }

@@ -1,6 +1,6 @@
 import Color from "Objects/Color";
 import Device from "new/Device";
-import Project from "new/Project";
+import DeviceElement from "new/DeviceElement";
 
 export default class LedFloodPanel150RGB8Channel extends Device {
   public type = "Stairville/LedFloodPanel150RGB/8Channel";
@@ -8,8 +8,8 @@ export default class LedFloodPanel150RGB8Channel extends Device {
   public color!: Color;
   public strobe!: number;
 
-  public constructor(project: Project) {
-    super(project, [
+  public constructor(config: DeviceElement) {
+    super(config, [
       {name: 'dimmer', default: 0},
       {name: 'color.r', default: 0},
       {name: 'color.g', default: 0},

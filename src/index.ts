@@ -4,7 +4,7 @@ import { hsl2rgb } from './util';
 import Microphone from 'Microphone';
 import BeatDetector from 'BeatDetector';
 import Gain from 'Gain';
-import * as Speaker from 'speaker';
+// import * as Speaker from 'speaker';
 import EL230RGBMK2 from '@device/Laserworld/EL230RGBMK2';
 import Spot60Prism from '@device/Light4Me/Movinghead/Spot60Prism';
 import * as commandLineArgs from 'command-line-args';
