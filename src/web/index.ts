@@ -17,10 +17,12 @@ async function setup(device: HIDDevice) {
     let controllerStatusButton = document.querySelector('#controller-status > button');
     if (controllerStatusButton != null)
         controllerStatusButton.outerHTML = "Connected";
+    // steamdeck.on('button:quickAcces:pressed', () => console.log("P"))
 }
 
 class Steamdeck extends EventEmitter {
     public ready: Promise<this>;
+    private oldState: SteamdeckInputPacket = new SteamdeckInputPacket(new DataView(new ArrayBuffer(64)));
 
     constructor(device: HIDDevice) {
         super();
@@ -28,9 +30,68 @@ class Steamdeck extends EventEmitter {
             if (!device.opened)
                 await device.open();
             device.addEventListener('inputreport', ({ data }) => this.emit('data', new SteamdeckInputPacket(data)));
+            this.on('data', (data: SteamdeckInputPacket) => {
+                Object.entries(data.buttons).forEach(([button, state]) => {
+                    if ((this.oldState.buttons as { [button: string]: boolean })[button] == state) return;
+                    this.emit(`button:${button}:changed`, state);
+                    if (state) this.emit(`button:${button}:pressed`);
+                    else this.emit(`button:${button}:released`);
+                });
+                Object.entries(data.dpad).forEach(([button, state]) => {
+                    if ((this.oldState.dpad as { [button: string]: boolean })[button] == state) return;
+                    this.emit(`dpad:${button}:changed`, state);
+                    if (state) this.emit(`dpad:${button}:pressed`);
+                    else this.emit(`dpad:${button}:released`);
+                });
+                Object.entries(data.trigger).forEach(([trigger, state]) => {
+                    if ((this.oldState.trigger as { [trigger: string]: number })[trigger] == state) return;
+                    this.emit(`trigger:${trigger}:changed`, state);
+                });
+                Object.entries(data.joystick).forEach(([joystick, state]) => {
+                    let oldJoystick = (this.oldState.joystick as { [joystick: string]: Joystick })[joystick];
+                    if (oldJoystick.click != state.click) {
+                        this.emit(`joystick:${joystick}:click:changed`, state.click);
+                        if (state.click) this.emit(`joystick:${joystick}:click:pressed`);
+                        else this.emit(`joystick:${joystick}:click:released`);
+                    };
+                    if (oldJoystick.touch != state.touch) {
+                        this.emit(`joystick:${joystick}:touch:changed`, state.touch);
+                        if (state.touch) this.emit(`joystick:${joystick}:touch:pressed`);
+                        else this.emit(`joystick:${joystick}:touch:released`);
+                    };
+                    if(oldJoystick.position.x != state.position.x || oldJoystick.position.y != state.position.y) {
+                        this.emit(`joystick:${joystick}:position:changed`, state.position);
+                    }
+                });
+                Object.entries(data.touchpad).forEach(([touchpad, state]) => {
+                    let oldTouchpad = (this.oldState.touchpad as { [touchpad: string]: Touchpad })[touchpad];
+                    if (oldTouchpad.click != state.click) {
+                        this.emit(`touchpad:${touchpad}:click:changed`, state.click);
+                        if (state.click) this.emit(`touchpad:${touchpad}:click:pressed`);
+                        else this.emit(`touchpad:${touchpad}:click:released`);
+                    };
+                    if (oldTouchpad.touch != state.touch) {
+                        this.emit(`touchpad:${touchpad}:touch:changed`, state.touch);
+                        if (state.touch) this.emit(`touchpad:${touchpad}:touch:pressed`);
+                        else this.emit(`touchpad:${touchpad}:touch:released`);
+                    };
+                    if(oldTouchpad.pressure != state.pressure) {
+                        this.emit(`touchpad:${touchpad}:pressure:changed`, state.position);
+                    }
+                    if(oldTouchpad.position.x != state.position.x || oldTouchpad.position.y != state.position.y) {
+                        this.emit(`touchpad:${touchpad}:position:changed`, state.position);
+                    }
+                });
+                this.oldState = data;
+            });
             resolve(this);
         });
     }
+
+    onMany(events: Array<string>, callback: Function) {    
+        events.forEach((ev) => this.on(ev, (...args) => callback(ev, ...args)));
+    }
+    
 }
 
 interface Position {
