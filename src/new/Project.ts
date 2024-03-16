@@ -5,20 +5,20 @@ import DeviceElement from "./DeviceElement";
 import NamedElement from "./NamedElement";
 import ModuleElement from "./ModuleElement";
 import Module from "./Module";
-import ArtNET, { DMXSender } from "ArtNET";
+// import ArtNET, { DMXSender } from "ArtNET";
 
 class Project {
     public ready: Promise<Project>;
     public config: ProjectConfig;
     public devices: {[id: string]: Device};
     public modules: {[id: string]: Module};
-    public dmx: DMXSender;
+    // public dmx: DMXSender;
 
     public constructor(public path: string) {
         this.config = new ProjectConfig();
         this.devices = {};
         this.modules = {};
-        this.dmx = ArtNET.newSender({net: 0, subnet: 0, universe: 0, subuni: 0});
+        // this.dmx = ArtNET.newSender({net: 0, subnet: 0, universe: 0, subuni: 0});
         this.ready = new Promise(async (resole) => {
             await this.load();
             fs.watchFile(this.path, () => this.load());

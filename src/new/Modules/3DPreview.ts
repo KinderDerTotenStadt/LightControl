@@ -9,7 +9,7 @@ class Module3DPreview extends Module {
         super(config);
         this.wsServer = new WebSocket.Server({ port: 3000 });
         this.wsServer.on('connection', (socket) => {    
-            setInterval(() => socket.send(JSON.stringify(this.project.devices)), 250)
+            setInterval(() => socket.send(JSON.stringify(this.project.devices)), 100)
         });
     }
 }

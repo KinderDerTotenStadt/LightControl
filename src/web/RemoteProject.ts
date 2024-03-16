@@ -9,8 +9,14 @@ class RemoteProject {
 
     constructor() {
         this.ws = new WebSocket(`wss://${window.location.host}/api/`);
-        let send = ((data: any) => {
+        let send = ((input: Array<[Object]>) => {
+            let data: {[id: string]: Object} = {};
+            input.forEach(_ => Object.entries(_[0]).forEach(([id, device]) => {
+                if(data[id] == null) data[id] = device;
+                else Object.entries(device).forEach(([property, value]) => (data[id] as any)[property] = value); 
+            }));
             this.ws.send(JSON.stringify(data));
+            // console.log(data);
         }).throttle(100);
         this.ready = new Promise((reoslve) => {
             this.ws.addEventListener('error', console.error);
@@ -26,11 +32,12 @@ class RemoteProject {
                                     set: (newValue) => {
                                         value = newValue;
                                         send({[id]: {[property]: value}});
+                                        // console.log(id, property, value);
                                     }
                                 });
                             });
                         } else {
-
+                            console.error("Not Implemented")
                         }
                     });
                     reoslve(this);

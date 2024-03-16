@@ -3,6 +3,7 @@ import Spot60Prism from "new/Devices/Light4Me/Movinghead/Spot60Prism";
 import LedFloodPanel150RGB8Channel from "new/Devices/Stairville/LedFloodPanel150RGB/8Channel";
 import devices from "./RemoteProject";
 import RemoteProject from "./RemoteProject";
+import presets from "./presets";
 
 async function connect() {
     const device = (await navigator.hid.requestDevice({ filters: [{ productId: 4613, vendorId: 10462 }] }))[0];
@@ -12,18 +13,72 @@ async function connect() {
 
 document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('#controller-status > button')?.addEventListener('click', connect);
+    document.querySelectorAll('.presets > button').forEach(button => button.addEventListener('click', () => applyPreset(button.getAttribute('preset'))));
     const device = (await navigator.hid.getDevices()).find(device => device.productId == 4613 && device.vendorId == 10462);
     if (device == null) return;
+    // device.forget();
     await setup(device);
 });
 
+function applyPreset(name: string | null) {
+    if(name == null) return;
+    let preset = presets[name];
+    let project = (window as unknown as {project: RemoteProject}).project;
+    Object.entries(preset).forEach(([id, state]) => {
+        let device = project.devices[id];
+        Object.entries(state as any).forEach(([property, value]) => {
+            (device as {[property: string]: any})[property] = value;
+        });
+    });
+}
+
+const blue = {
+    r: 0,
+    g: 0,
+    b: 255
+};
+
+const green = {
+    r: 0,
+    g: 255,
+    b: 0
+};
+
+const yellow = {
+    r: 255,
+    g: 255,
+    b: 0
+};
+
+const red = {
+    r: 255,
+    g: 0,
+    b: 0
+};
+
+const white = {
+    r: 255,
+    g: 255,
+    b: 255
+};
+
+const black = {
+    r: 0,
+    g: 0,
+    b: 0
+};
+
+
 async function setup(device: HIDDevice) {
     let steamdeck = await new Steamdeck(device).ready;
-    let project = await new RemoteProject().ready;
     let controllerStatusButton = document.querySelector('#controller-status > button');
     if (controllerStatusButton != null)
         controllerStatusButton.outerHTML = "Connected";
-    (window as any).project = project;
+    let project = await new RemoteProject().ready;
+    (window as unknown as {project: RemoteProject}).project = project;
+    let websocketStatusText = document.querySelector('#websocket-status > span');
+    if (websocketStatusText != null)
+        websocketStatusText.innerHTML = "Connected";
 
     let movingheadLeft = (project.devices['Movinghead/Left'] as Spot60Prism);
     let movingheadRight = (project.devices['Movinghead/Right'] as Spot60Prism);
@@ -36,52 +91,79 @@ async function setup(device: HIDDevice) {
     steamdeck.on(`button:y:pressed`, () => {
         movingheadLeft.color = 6;
         movingheadRight.color = 6;
-        parZugLeft.color.r = 0;
-        parZugLeft.color.g = 0;
-        parZugLeft.color.b = 255;
-        parZugRight.color.r = 0;
-        parZugRight.color.g = 0;
-        parZugRight.color.b = 255;
+        parZugLeft.color = blue;
+        parZugRight.color = blue;
     });
 
     steamdeck.on(`button:b:pressed`, () => {
         movingheadLeft.color = 2;
         movingheadRight.color = 2;
-        parZugLeft.color.r = 0;
-        parZugLeft.color.g = 255;
-        parZugLeft.color.b = 0;
-        parZugRight.color.r = 0;
-        parZugRight.color.g = 255;
-        parZugRight.color.b = 0;
-    });
-
-    steamdeck.on(`button:x:pressed`, () => {
-        movingheadLeft.color = 0;
-        movingheadRight.color = 0;
-        parZugLeft.color.r = 0;
-        parZugLeft.color.g = 0;
-        parZugLeft.color.b = 0;
-        parZugRight.color.r = 0;
-        parZugRight.color.g = 0;
-        parZugRight.color.b = 0;
+        parZugLeft.color = green;
+        parZugRight.color = green;
     });
 
     steamdeck.on(`button:a:pressed`, () => {
         movingheadLeft.color = 4;
         movingheadRight.color = 4;
-        parZugLeft.color.r = 255;
-        parZugLeft.color.g = 255;
-        parZugLeft.color.b = 0;
-        parZugRight.color.r = 255;
-        parZugRight.color.g = 255;
-        parZugRight.color.b = 0;
+        parZugLeft.color = yellow;
+        parZugRight.color = yellow;
+    });
+
+    steamdeck.on(`button:x:pressed`, () => {
+        movingheadLeft.color = 1;
+        movingheadRight.color = 1;
+        parZugLeft.color = red;
+        parZugRight.color = red;
+    });
+
+    steamdeck.on(`button:r4:pressed`, () => {
+        movingheadLeft.color = 0;
+        movingheadRight.color = 0;
+        parZugLeft.color = white;
+        parZugRight.color = white;
+    });
+
+    steamdeck.on(`button:r5:pressed`, () => {
+        movingheadLeft.color = 0;
+        movingheadRight.color = 0;
+        parZugLeft.color = black;
+        parZugRight.color = black;
+    });
+
+
+
+    let gobos = false;
+    steamdeck.on(`dpad:up:pressed`, () => {
+        gobos = ! gobos;
+        if(gobos) {
+            movingheadLeft.gobo = 8 * 0; // 0, 3
+            movingheadLeft.prism = true;
+            movingheadLeft.prismRotation = 128;
+        } else {
+            movingheadLeft.gobo = 0;
+            movingheadLeft.prism = false;
+            movingheadLeft.prismRotation = 0;
+        }
+        movingheadRight.gobo = movingheadLeft.gobo;
+        movingheadRight.prism = movingheadLeft.prism;
+        movingheadRight.prismRotation = movingheadLeft.prismRotation;
+    });
+
+    steamdeck.on(`button:l4:pressed`, () => {
+        movingheadLeft.dimmer = Math.max(16, Math.min(255, movingheadLeft.dimmer + 16));
+        movingheadRight.dimmer = movingheadLeft.dimmer;
+    });
+
+    steamdeck.on(`button:l5:pressed`, () => {
+        movingheadLeft.dimmer = Math.max(16, Math.min(255, movingheadLeft.dimmer - 16));
+        movingheadRight.dimmer = movingheadLeft.dimmer;
     });
 }
 
 function setupSpot(steamdeck: Steamdeck, side: string, movinghead: Spot60Prism) {
     steamdeck.on(`joystick:${side}:position:changed`, (position: Position) => {
-        movinghead.pan = Math.max(0, Math.min(540, movinghead.pan + position.x / 32767 * 4));
-        movinghead.tilt = Math.max(0, Math.min(280, movinghead.tilt - position.y / 32767 * 4));
+        movinghead.pan = Math.max(0, Math.min(540, movinghead.pan + position.x / 32767 / 8));
+        movinghead.tilt = Math.max(0, Math.min(280, movinghead.tilt + position.y / 32767 / 8));
     });
     steamdeck.on(`button:${side.substring(0, 1)}1:pressed`, () => movinghead.strobe = movinghead.strobe == 8 ? 0 : 8);
 }
@@ -97,7 +179,14 @@ class Steamdeck extends EventEmitter {
             if (!device.opened)
                 await device.open();
             device.addEventListener('inputreport', ({ data }) => this.emit('data', new SteamdeckInputPacket(data)));
+            const working = () => {
+                console.log('Steamdeck Connected!')
+                device.removeEventListener('inputreport', working);
+            }
+            device.addEventListener('inputreport', working);
+            // device.addEventListener('inputreport', ({ data }) => console.log(data));
             this.on('data', (data: SteamdeckInputPacket) => {
+                // console.log(data);
                 this.state = data;
                 Object.entries(data.buttons).forEach(([button, state]) => {
                     if ((this.oldState.buttons as { [button: string]: boolean })[button] == state) return;

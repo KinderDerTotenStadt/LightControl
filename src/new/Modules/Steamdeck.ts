@@ -13,8 +13,19 @@ class ModuleSteamdeck extends Module {
 
         this.wsServer = new WebSocket.Server({ port: 3001 });
         this.wsServer.on('connection', (socket) => {  
-            console.log("Steamdeck")  
-            setInterval(() => socket.send(JSON.stringify(this.project.devices)), 250)
+            console.log("Steamdeck Connected!")  
+            setInterval(() => socket.send(JSON.stringify(this.project.devices)), 5000);
+            socket.addEventListener('message', ({data}) => {
+                let json = JSON.parse(data.toString());
+                Object.entries(json as {[id: string]: {[property: string]: Object | number | boolean}}).forEach(([id, device]) => {
+                    if (this.project.devices[id] != null) {
+                        Object.entries(device).forEach(([property, value]) => {
+                            if(typeof value == "object") Object.entries(value).forEach(([subProperty, subValue]) => (this.project.devices[id] as any)[property][subProperty] = subValue);
+                            else (this.project.devices[id] as any)[property] = value;
+                        });
+                    }
+                });
+            })
         });
 
         // let mh1 = (this.project.devices['Movinghead/Left'] as Spot60Prism);

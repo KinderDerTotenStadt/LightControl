@@ -1,18 +1,20 @@
 declare interface Function {
-   throttle: (minimumDistance: number) => this;
+   throttle: <T extends Array<any>>(this: (data: Array<T>) => any ,minimumDistance: number) => ((...args: T) => any);
 }
 
 Function.prototype.throttle = function(minimumDistance) {
    let timeout: number | null,
        lastCalled = 0,
-       throttledFunction = this;
+       throttledFunction = this,
+       argumentStack: Array<any> = [];
 
    function throttleCore(this: any) {
       let context = this;
-
-      function callThrottledFunction(args: any) {
+      argumentStack.push(arguments);
+      function callThrottledFunction() {
          lastCalled = Date.now();
-         throttledFunction.apply(context, args);
+         throttledFunction.apply(context, [argumentStack]);
+         argumentStack = [];
       }
       // Wartezeit bis zum nächsten Aufruf bestimmen
       let timeToNextCall = minimumDistance - (Date.now() - lastCalled);
@@ -20,9 +22,9 @@ Function.prototype.throttle = function(minimumDistance) {
       cancelTimer();
       // Aufruf direkt durchführen oder um offene Wartezeit verzögern
       if (timeToNextCall < 0) {
-         callThrottledFunction(arguments);
+         callThrottledFunction();
       } else {
-         timeout = setTimeout(callThrottledFunction, timeToNextCall, arguments) as unknown as number;
+         timeout = setTimeout(callThrottledFunction, timeToNextCall) as unknown as number;
       }
    }
    function cancelTimer() {

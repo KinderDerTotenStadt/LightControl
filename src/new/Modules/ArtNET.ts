@@ -19,12 +19,13 @@ class ModuleArtNET extends Module {
                     let device = this.project.devices[deviceId];
                     let address = Number((device.config.attributes['address']?.toString() ?? "").split('.')[1]);
                     device.dmxChannels.forEach((value: number, channel: number) => {
-                        console.log(address + channel, value);
+                        // console.log(address + channel, value);
                         sender.setChannel(address + channel, value);
                     })
                     device.on('dmxChanged', (channel: number, value: number) => {
-                        console.log(address + channel, value);
+                        // console.log(address + channel, value);
                         sender.setChannel(address + channel, value);
+                        // sender.transmit();
                     });
                 });
             });
@@ -39,14 +40,14 @@ class ModuleArtNET extends Module {
 
             this.project.ready.then(() => {
                 let lights = [
-                    (this.project.devices['Left/1'] as Switch),
-                    (this.project.devices['Left/2'] as Switch),
-                    (this.project.devices['Left/3'] as Switch),
-                    (this.project.devices['Left/4'] as Switch),
                     (this.project.devices['Right/1'] as Switch),
                     (this.project.devices['Right/2'] as Switch),
                     (this.project.devices['Right/3'] as Switch),
                     (this.project.devices['Right/4'] as Switch),
+                    (this.project.devices['Left/1'] as Switch),
+                    (this.project.devices['Left/2'] as Switch),
+                    (this.project.devices['Left/3'] as Switch),
+                    (this.project.devices['Left/4'] as Switch),
                 ];
 
                 receiver.on('data', (data: Array<number>) => {
